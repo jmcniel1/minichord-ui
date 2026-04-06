@@ -78,6 +78,45 @@ function getParamIcon(name) {
   return '';
 }
 
+// Group header icons — colored circle with line icon inside
+function getGroupIcon(name) {
+  const n = name.toLowerCase();
+  // 22x22 circle bg + 12x12 icon centered (offset 5,5)
+  const wrap = (paths) => `<svg width="33" height="33" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="var(--group-color, rgba(255,255,255,0.2))" opacity="0.2"/><g transform="translate(5,5)" stroke="var(--group-color, #888)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none">${paths}</g></svg>`;
+
+  if (n === 'settings')
+    return wrap('<circle cx="6" cy="6" r="2.5"/><path d="M6 1V2.5M6 9.5V11M1 6H2.5M9.5 6H11M2.5 2.5L3.5 3.5M8.5 8.5L9.5 9.5M2.5 9.5L3.5 8.5M8.5 3.5L9.5 2.5"/>');
+  if (n === 'midi')
+    return wrap('<circle cx="6" cy="6" r="4.5"/><circle cx="4" cy="5" r="0.7" fill="var(--group-color, #888)"/><circle cx="8" cy="5" r="0.7" fill="var(--group-color, #888)"/><circle cx="6" cy="8" r="0.7" fill="var(--group-color, #888)"/><circle cx="3.5" cy="7.5" r="0.7" fill="var(--group-color, #888)"/><circle cx="8.5" cy="7.5" r="0.7" fill="var(--group-color, #888)"/>');
+  if (n === 'effects')
+    return wrap('<path d="M6 1L7 4L10 3L8 6L11 7L8 8L10 11L7 9L6 12L5 9L2 11L4 8L1 7L4 6L2 3L5 4Z"/>');
+  if (n === 'potentiometer')
+    return wrap('<circle cx="6" cy="6" r="4"/><circle cx="6" cy="6" r="1.5" fill="var(--group-color, #888)"/><path d="M6 2V0M6 12V10"/>');
+  if (n === 'general')
+    return wrap('<path d="M2 3H10M2 6H10M2 9H10"/><circle cx="5" cy="3" r="1" fill="var(--group-color, #888)"/><circle cx="7" cy="6" r="1" fill="var(--group-color, #888)"/><circle cx="4" cy="9" r="1" fill="var(--group-color, #888)"/>');
+  if (n === 'oscillator')
+    return wrap('<path d="M0 6C2 1 4 1 6 6C8 11 10 11 12 6"/>');
+  if (n === 'envelope')
+    return wrap('<path d="M1 10L3 2L5 2L7 7L9 7L11 10"/>');
+  if (n === 'low pass filter')
+    return wrap('<path d="M1 3L5 3C7 3 8 5 9 8L11 10"/><path d="M7 2L9 5" opacity="0.4"/>');
+  if (n === 'transient')
+    return wrap('<path d="M1 10L4 10L6 1L8 10L11 10"/>');
+  if (n === 'tremolo')
+    return wrap('<path d="M1 6C2 3 3 3 4 6C5 9 6 9 7 6C8 3 9 3 10 6" opacity="0.4"/><path d="M1 6C2 4 3 4 4 6C5 8 6 8 7 6C8 4 9 4 10 6"/>');
+  if (n === 'vibrato')
+    return wrap('<path d="M1 6C2 2 3 10 4 6C5 2 6 10 7 6C8 2 9 10 10 6"/>');
+  if (n === 'output filter')
+    return wrap('<path d="M1 1L5 5V10L7 10V5L11 1Z"/>');
+  if (n === 'rythm')
+    return wrap('<path d="M6 1V8"/><circle cx="4" cy="9" r="2"/><path d="M1 4L4 2M8 2L11 4" opacity="0.4"/>');
+  if (n === 'sequencer' || n === 'arp pattern')
+    return wrap('<rect x="1" y="1" width="3" height="3" rx="0.5" fill="var(--group-color, #888)" opacity="0.6"/><rect x="5" y="1" width="3" height="3" rx="0.5" opacity="0.3"/><rect x="9" y="1" width="3" height="3" rx="0.5" fill="var(--group-color, #888)" opacity="0.6"/><rect x="1" y="5" width="3" height="3" rx="0.5" opacity="0.3"/><rect x="5" y="5" width="3" height="3" rx="0.5" fill="var(--group-color, #888)" opacity="0.6"/><rect x="9" y="5" width="3" height="3" rx="0.5" opacity="0.3"/><rect x="1" y="9" width="3" height="3" rx="0.5" opacity="0.3"/><rect x="5" y="9" width="3" height="3" rx="0.5" opacity="0.3"/><rect x="9" y="9" width="3" height="3" rx="0.5" fill="var(--group-color, #888)" opacity="0.6"/>');
+
+  // fallback — generic dot
+  return wrap('<circle cx="6" cy="6" r="3"/>');
+}
+
 //-->> UI BUILDER — dynamically generates parameter rows from JSON
 async function buildParameterUI() {
   try {
@@ -154,7 +193,15 @@ async function buildParameterUI() {
         }
 
         const h4 = document.createElement('h4');
-        h4.textContent = groupName;
+        const groupIcon = getGroupIcon(groupName);
+        if (groupIcon) {
+          const iconSpan = document.createElement('span');
+          iconSpan.className = 'group-icon';
+          iconSpan.innerHTML = groupIcon;
+          h4.appendChild(iconSpan);
+        }
+        const h4Text = document.createTextNode(groupName);
+        h4.appendChild(h4Text);
         groupEl.appendChild(h4);
 
         for (const param of groupParams) {
@@ -244,7 +291,14 @@ async function buildParameterUI() {
           seqEl.className = 'param-group sequencer-group';
           seqEl.style.setProperty('--group-color', groupEl.style.getPropertyValue('--group-color'));
           const seqH4 = document.createElement('h4');
-          seqH4.textContent = 'Sequencer';
+          const seqIcon = getGroupIcon('Arp Pattern');
+          if (seqIcon) {
+            const seqIconSpan = document.createElement('span');
+            seqIconSpan.className = 'group-icon';
+            seqIconSpan.innerHTML = seqIcon;
+            seqH4.appendChild(seqIconSpan);
+          }
+          seqH4.appendChild(document.createTextNode('Arp Pattern'));
           seqEl.appendChild(seqH4);
 
           const rhythmContainer = document.createElement('div');
@@ -352,6 +406,72 @@ function handlechange(event) {
   }
 }
 
+// Euclidean rhythm generator — distributes N hits evenly across M steps
+function euclidean(hits, steps) {
+  if (hits >= steps) return new Array(steps).fill(1);
+  if (hits <= 0) return new Array(steps).fill(0);
+  let pattern = [];
+  let bucket = 0;
+  for (let i = 0; i < steps; i++) {
+    bucket += hits;
+    if (bucket >= steps) {
+      bucket -= steps;
+      pattern.push(1);
+    } else {
+      pattern.push(0);
+    }
+  }
+  return pattern;
+}
+
+// Rotate a pattern array by N positions
+function rotatePattern(pattern, offset) {
+  const n = pattern.length;
+  const o = ((offset % n) + n) % n;
+  return [...pattern.slice(o), ...pattern.slice(0, o)];
+}
+
+// Randomize one voice lane with a rhythmically coherent euclidean pattern
+function randomizeVoiceLane(voiceIndex) {
+  // Weighted hit counts — favor musical divisions
+  const hitWeights = [
+    { hits: 0, weight: 2 },
+    { hits: 1, weight: 3 },
+    { hits: 2, weight: 5 },   // half notes
+    { hits: 3, weight: 6 },   // E(3,16) — common in world music
+    { hits: 4, weight: 10 },  // 4/4 quarter notes
+    { hits: 5, weight: 5 },   // E(5,16) — bossa nova feel
+    { hits: 6, weight: 4 },   // E(6,16)
+    { hits: 7, weight: 3 },   // E(7,16) — West African
+    { hits: 8, weight: 7 },   // 8th notes
+    { hits: 10, weight: 2 },
+    { hits: 12, weight: 2 },
+    { hits: 16, weight: 1 },  // all on
+  ];
+
+  // Weighted random selection
+  const totalWeight = hitWeights.reduce((sum, w) => sum + w.weight, 0);
+  let r = Math.random() * totalWeight;
+  let selectedHits = 4;
+  for (const w of hitWeights) {
+    r -= w.weight;
+    if (r <= 0) { selectedHits = w.hits; break; }
+  }
+
+  // Generate euclidean pattern with random rotation
+  const pattern = euclidean(selectedHits, 16);
+  const rotated = rotatePattern(pattern, Math.floor(Math.random() * 16));
+
+  // Apply to checkboxes
+  for (let j = 0; j < 16; j++) {
+    const cb = document.getElementById('checkbox' + voiceIndex + j);
+    if (cb) cb.checked = !!rotated[j];
+  }
+
+  // Send to device
+  send_array_data();
+}
+
 // Build rhythm checkbox grid as a table
 function checkbox_array() {
   const voiceNames = ['voice 1', 'voice 2', 'voice 3', 'voice 4', 'voice 4"', 'voice 5"', 'voice 6"'];
@@ -389,7 +509,21 @@ function checkbox_array() {
 
     const tr = document.createElement('tr');
     const labelTd = document.createElement('td');
-    labelTd.textContent = voiceNames[i] || ('voice ' + (i + 1));
+    const labelText = document.createElement('span');
+    labelText.textContent = voiceNames[i] || ('voice ' + (i + 1));
+    labelTd.appendChild(labelText);
+    const diceBtn = document.createElement('button');
+    diceBtn.className = 'dice-btn';
+    diceBtn.title = 'Randomize lane';
+    diceBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="12" height="12" rx="2"/><circle cx="4.5" cy="4.5" r="1" fill="currentColor" stroke="none"/><circle cx="9.5" cy="4.5" r="1" fill="currentColor" stroke="none"/><circle cx="7" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="9.5" r="1" fill="currentColor" stroke="none"/><circle cx="9.5" cy="9.5" r="1" fill="currentColor" stroke="none"/></svg>';
+    diceBtn.onclick = (function(idx) { return function(e) { e.stopPropagation(); randomizeVoiceLane(idx); }; })(i);
+    labelTd.appendChild(diceBtn);
+    const clearBtn = document.createElement('button');
+    clearBtn.className = 'dice-btn';
+    clearBtn.title = 'Clear lane';
+    clearBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M2 2L10 10M10 2L2 10"/></svg>';
+    clearBtn.onclick = (function(idx) { return function(e) { e.stopPropagation(); for (let j=0;j<16;j++){const cb=document.getElementById('checkbox'+idx+j);if(cb)cb.checked=false;} send_array_data(); }; })(i);
+    labelTd.appendChild(clearBtn);
     tr.appendChild(labelTd);
 
     for (let j = 0; j < 16; j++) {
