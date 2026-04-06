@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>minicontrol</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body id="body" class="control_full">
+
+<!-- Unicorn Studio shader background -->
+<div id="shader-bg" data-us-project="2iAcALMfvIJJnVBYHLJH"></div>
+<script type="text/javascript">!function(){var u=window.UnicornStudio;if(u&&u.init){if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){u.init()})}else{u.init()}}else{window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.6/dist/unicornStudio.umd.js",i.onload=function(){if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){UnicornStudio.init()})}else{UnicornStudio.init()}},(document.head||document.body).appendChild(i)}}();</script>
+
+<div id="app">
+  <!-- Top header bar (TE-DMX style) -->
+  <header id="topbar">
+    <div class="topbar-left">
+      <h1>minicontrol</h1>
+      <div id="status_zone" class="unconnected">
+        <span id="dot">&#9679;</span>
+        <span id="status_value"></span>
+      </div>
+      <div id="information_zone" tabindex="0">
+        <span id="information_text"></span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-group">
+        <label>Bank</label>
+        <select id="bank_number_selection" name="bank number">
+          <option value="1">01</option>
+          <option value="2">02</option>
+          <option value="3">03</option>
+          <option value="4">04</option>
+          <option value="5">05</option>
+          <option value="6">06</option>
+          <option value="7">07</option>
+          <option value="8">08</option>
+          <option value="9">09</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+        </select>
+        <button class="primary" onclick="save_current_settings()">Save</button>
+      </div>
+      <div class="topbar-group">
+        <button onclick="generate_settings()">Export</button>
+        <button onclick="load_settings()">Import</button>
+      </div>
+      <div class="topbar-group">
+        <button id="randomise_btn">Random</button>
+      </div>
+      <div class="topbar-group">
+        <button class="danger" onclick="reset_current_bank()">Reset bank</button>
+        <button class="danger" onclick="reset_memory()">Reset all</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hidden connection instructions (shown when needed) -->
+  <div id="instruction_zone" style="display:none">
+    <ul>
+      <li id="step1" class="unsatisfied">Provide MIDI access permission</li>
+      <li id="step2" class="unsatisfied">Use a recent version of Chrome</li>
+      <li id="step3" class="unsatisfied">Connect minichord via USB and power on</li>
+    </ul>
+  </div>
+
+  <!-- Main parameters -->
+  <main id="main">
+    <div id="parameters"></div>
+  </main>
+</div>
+
+<div id="output_zone"></div>
+
+<script src="javascript/minichordcontroller.js"></script>
+<script src="javascript/index.js"></script>
+</body>
+</html>
