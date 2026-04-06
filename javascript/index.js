@@ -926,10 +926,33 @@ async function generateRandomPreset() {
   console.log("Random preset generated and applied!");
 }
 
-// (sidebar removed — controls are in the top header bar now)
+// Shader background toggle
+let shaderInitialized = false;
+function toggleShaderBg() {
+  const shader = document.getElementById('shader-bg');
+  const imgBg = document.getElementById('img-bg');
+  const btn = document.getElementById('bg-toggle');
+  if (!shader) return;
+  const isOn = shader.style.display !== 'none';
+  shader.style.display = isOn ? 'none' : '';
+  if (imgBg) imgBg.style.display = isOn ? '' : 'none';
+  if (btn) btn.classList.toggle('primary', !isOn);
+  // Lazy-init Unicorn Studio on first show
+  if (!isOn && !shaderInitialized && window.UnicornStudio) {
+    shaderInitialized = true;
+    UnicornStudio.init();
+  }
+}
 
 //-->> INITIALIZATION
 document.addEventListener('DOMContentLoaded', async () => {
+  // Random background image on refresh
+  const bgImages = ['images/bg1.webp', 'images/bg2.png', 'images/bg3.png', 'images/bg4.jpeg'];
+  const imgBg = document.getElementById('img-bg');
+  if (imgBg) {
+    imgBg.style.backgroundImage = 'url(' + bgImages[Math.floor(Math.random() * bgImages.length)] + ')';
+  }
+
   // Build UI from JSON
   await buildParameterUI();
 

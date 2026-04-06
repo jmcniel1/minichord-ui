@@ -8,9 +8,14 @@
 </head>
 <body id="body" class="control_full">
 
+<!-- Static blurred bg image (random on refresh) -->
+<div id="img-bg"></div>
+<div id="img-bg-shade"></div>
+<div id="film-grain"></div>
+
 <!-- Unicorn Studio shader background -->
-<div id="shader-bg" data-us-project="2iAcALMfvIJJnVBYHLJH"></div>
-<script type="text/javascript">!function(){var u=window.UnicornStudio;if(u&&u.init){if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){u.init()})}else{u.init()}}else{window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.6/dist/unicornStudio.umd.js",i.onload=function(){if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){UnicornStudio.init()})}else{UnicornStudio.init()}},(document.head||document.body).appendChild(i)}}();</script>
+<div id="shader-bg" data-us-project="2iAcALMfvIJJnVBYHLJH" style="display:none"></div>
+<script type="text/javascript">!function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.6/dist/unicornStudio.umd.js";(document.head||document.body).appendChild(i)}}();</script>
 
 <div id="app">
   <!-- Top header bar (TE-DMX style) -->
@@ -54,6 +59,9 @@
       <div class="topbar-group">
         <button class="danger" onclick="reset_current_bank()">Reset bank</button>
         <button class="danger" onclick="reset_memory()">Reset all</button>
+      </div>
+      <div class="topbar-group">
+        <button id="bg-toggle" onclick="toggleShaderBg()">BG Magic</button>
       </div>
     </div>
   </header>
